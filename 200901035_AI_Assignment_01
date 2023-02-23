@@ -1,0 +1,74 @@
+# Define the graph as a dictionary where the keys are the cities and the values are dictionaries of neighboring cities and their distances
+graph = {
+  'Arad': {'Zerind': 75, 'Timisoara': 118, 'Sibiu': 140},
+  'Bucharest': {'Urziceni': 85, 'Pitesti': 101, 'Giurgiu': 90, 'Fagaras': 211},
+  'Craiova': {'Dobreta': 120, 'Rimnicu Vilcea': 146, 'Pitesti': 138},
+  'Dobreta': {'Mehadia': 75, 'Craiova': 120},
+  'Eforie': {'Hirsova': 86},
+  'Fagaras': {'Sibiu': 99, 'Bucharest': 211},
+  'Giurgiu': {'Bucharest': 90},
+  'Hirsova': {'Urziceni': 98, 'Eforie': 86},
+  'Iasi': {'Neamt': 87, 'Vaslui': 92},
+  'Lugoj': {'Timisoara': 111, 'Mehadia': 70},
+  'Mehadia': {'Lugoj': 70, 'Dobreta': 75},
+  'Neamt': {'Iasi': 87},
+  'Oradea': {'Zerind': 71, 'Sibiu': 151},
+  'Pitesti': {'Rimnicu Vilcea': 97, 'Bucharest': 101, 'Craiova': 138},
+  'Rimnicu Vilcea': {'Sibiu': 80, 'Craiova': 146, 'Pitesti': 97},
+  'Sibiu': {'Arad': 140, 'Oradea': 151, 'Fagaras': 99, 'Rimnicu Vilcea': 80},
+  'Timisoara': {'Arad': 118, 'Lugoj': 111},
+  'Urziceni': {'Bucharest': 85, 'Hirsova': 98, 'Vaslui': 142},
+  'Vaslui': {'Iasi': 92, 'Urziceni': 142},
+  'Zerind': {'Arad': 75, 'Oradea': 71}
+}
+
+# Define the starting city and the target city
+start = 'Arad'
+goal = 'Bucharest'
+
+# keep track of the shortest distances from the starting city to each city in the graph
+distances = {city: float('infinity') for city in graph}
+distances[start] = 0
+
+#keep track of the previous city in the shortest path to each city and initialize each city with a value of None
+previous_cities = {city: None for city in graph}
+
+# Create a set to keep track of visited cities
+visited = set()
+
+# Loop will continue until all cities have been visited
+while len(visited) < len(graph):
+
+# Find the unvisited city with the shortest distance from the starting city and this is done by iterating through all cities
+  min_distance = float('infinity')
+  min_city = None
+  for city in graph:
+#if the city has not been visited yet and if the distance to the city from starting city is less than minimum distance found so far.
+
+    if city not in visited and distances[city] < min_distance: 
+      min_distance = distances[city]
+      min_city = city
+
+#Visit the city with the shortest distance by adding it to the visited set
+  visited.add(min_city)
+
+  # Update the distances to the neighboring cities of the visited city if shortest path is found n is done by calculating new distance to the neighbouring city
+  for neighbor, distance in graph[min_city].items():
+    new_distance = distances[min_city] + distance
+    if new_distance < distances[neighbor]: #if shorter than the new distance is updated 
+      distances[neighbor] = new_distance
+      previous_cities[neighbor] = min_city
+
+# Build the shortest path from the previous_cities dictionary
+#path is stored in a list n then reversed to get the correct order of cities
+path = [] 
+current_city = goal
+while current_city != start:
+  path.append(current_city)
+  current_city = previous_cities[current_city]
+path.append(start)
+path.reverse()
+
+# Print the shortest path and the total distance
+print(f'Shortest path from {start} to {goal}: {path}')
+print(f'Total distance: {distances[goal]} km')
